@@ -1,6 +1,6 @@
 {/* https://linear.app/mysten-labs/issue/DOCS-628/getting-startedindex */}
 
-Walrus is a platform for building efficient and resilient data markets, where data is stored as blobs. Walrus stores each blob as an immutable array of bytes, and you can store any type of file, such as text, video, or source code.
+Walrus is a verifiable data platform for high-stakes systems like AI and on-chain finance, where data is stored as blobs.
 
 Sui is a blockchain that supports programmability at a [fundamental level](https://docs.sui.io/concepts/transactions/prog-txn-blocks). Walrus binds all blobs to objects on the Sui blockchain.
 
@@ -174,7 +174,22 @@ Replace `file.txt` with the file you want to store on Walrus. You can store any 
 
 You must specify the `--epochs` flag, as the system stores blobs for a certain number of epochs. An epoch is a certain period of time on the network. On Testnet, epochs are 1 day, and on Mainnet epochs are 2 weeks. You can extend the number of epochs the system stores a blob indefinitely.
 
-The system uploads a blob in slivers, which are small pieces of the file the system stores on different servers through erasure coding. [Learn more](/docs/design/encoding) about the Walrus architecture and how the system implements erasure coding.
+The system uploads a blob in slivers, which are small pieces of the file the system stores on different servers through erasure coding. [Learn more](/docs/system-overview/red-stuff) about the Walrus architecture and how the system implements erasure coding.
+
+<!-- IMPORT_CONTENT_RESOLVED source="blob-object-id" mode="snippet" -->
+After you upload a blob to Walrus, it has 2 identifiers:
+
+```sh
+Blob ID: oehkoh0352bRGNPjuwcy0nye3OLKT649K62imdNAlXg
+Sui object ID: 0x1c086e216c4d35bf4c1ea493aea701260ffa5b0070622b17271e4495a030fe83
+```
+
+- Blob ID: A way to reference the blob on Walrus. The system generates the blob ID based on the blob's contents, meaning any file you upload to the network twice results in the same blob ID.
+
+- Sui Object ID: The blob's corresponding newly created Sui object identifier, as the system binds all blobs to one or more Sui objects.
+
+You use blob IDs to read blob data, while you use Sui object IDs to make modifications to the blob's metadata, such as its storage duration. You might also use them to read blob data.
+<!-- /IMPORT_CONTENT_RESOLVED -->
 
 You can use the [Walrus Explorer](https://walruscan.com/) to view more information about a blob ID.
 

@@ -142,6 +142,18 @@ $ docker run \
 
 Here is an example of the `walrus-upload-relay` configuration file:
 
+<!-- IMPORT_CONTENT_RESOLVED source="/crates/walrus-upload-relay/walrus_upload_relay_config_example.yaml" mode="code" -->
+```yaml title="crates/walrus-upload-relay/walrus_upload_relay_config_example.yaml"
+tip_config: !send_tip
+  address: 0x2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a
+  kind: !const 42
+tx_freshness_threshold_secs: 36000
+tx_max_future_threshold:
+  secs: 30
+  nanos: 0
+```
+<!-- /IMPORT_CONTENT_RESOLVED -->
+
 Currently, the options are the following:
 
 - `tip_config`: The configuration for the tip to be paid. It can be `!no_tip`, for the free service, or `!send_tip`, to configure the requested tip. In that case, `address` contains the hex-encoded address of the upload relay owner, where the tip should be sent to, and `kind` is the kind of tip that should be paid. It can be `!const`, for a constant tip for each store, or `!linear`, for a tip that is linear in the unencoded blob size.
