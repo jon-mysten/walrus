@@ -21,11 +21,11 @@ Important notes:
 
 - [Advanced Setup](https://docs.wal.app/docs/getting-started/advanced-setup.md): This page covers
     advanced setup options for Walrus, including building from source, installing from binaries, or
-    using Cargo. For standard setup instructions, see the Walrus Getting Started guide. Walrus is
-    open source under an Apache 2 license.
+    using Cargo. For standard setup instructions, see Getting Started. Walrus is open source under
+    an Apache 2 license.
 - [Getting Started](https://docs.wal.app/docs/getting-started.md): Walrus is a verifiable data
     platform for high-stakes systems like AI and on-chain finance, where data is stored as blobs.
-    Walrus uses an object storage architecture, where blobs is stored in a flat namespace rather
+    Walrus uses an object storage architecture, where blobs are stored in a flat namespace rather
     than a hierarchy. There are no folders or directories.
 
 ## System Overview
@@ -132,51 +132,67 @@ Important notes:
 
 ## Operator Guide
 
-- [Aggregator](https://docs.wal.app/docs/operator-guide/aggregator.md): Run a Walrus aggregator or
-    publisher to expose the HTTP API. Run a local Walrus daemon through the walrus binary using one
-    of three commands: walrus aggregator: Starts an aggregator that offers an HTTP interface to
-    read blobs from Walrus.
-- [Auth Publisher](https://docs.wal.app/docs/operator-guide/auth-publisher.md): The authenticated
-    publisher requires HTTP requests to store a blob to be authenticated. Use an authenticated
-    publisher as a building block for services that require storing over HTTP on Walrus Mainnet,
-    where an open publisher is undesirable because of the SUI and WAL cost of publishing to Walrus.
-- [Backup Restore Guide](https://docs.wal.app/docs/operator-guide/backup-restore-guide.md): Walrus
-    storage nodes provide backup and restore functionality for the primary database containing blob
-    data. This guide covers configuration requirements, operational procedures, and best practices
-    for both automated and manual backup processes, and restore operations.
-- [Commission Governance](https://docs.wal.app/docs/operator-guide/commission-governance.md): While
-    most node parameters can be changed using StorageNodeCap and are automatically updated based on
-    the values in the node configuration, authorization for contract upgrades and withdrawing the
-    storage node's commission is handled separately to ensure that the hot wallet on the storage
-    node does not need to be authorized for these operations.
-- [Operator Guide](https://docs.wal.app/docs/operator-guide/operator-guide.md): This guide contains
-    information about operating services in the network, specifically storage nodes, aggregators
-    and publishers.
+- [Operating
+    Aggregator](https://docs.wal.app/docs/operator-guide/aggregators/operating-aggregator.md): Run
+    a Walrus aggregator to expose the HTTP API.
+- [Operator Guide](https://docs.wal.app/docs/operator-guide.md): Service providers on Walrus host
+    network services such as storage nodes, aggregators, and publishers.
+- [Limitations](https://docs.wal.app/docs/operator-guide/limitations.md): By default, store blob
+    requests are limited to 10 MiB. You can increase this limit through the --max-body-size option.
+    Store quilt requests are limited to 100 MiB by default, and you can increase them using the
+    --max-quilt-body-size option.
+- [Auth Publisher](https://docs.wal.app/docs/operator-guide/publishers/auth-publisher.md): The
+    authenticated publisher requires HTTP requests to store a blob to be authenticated. Use an
+    authenticated publisher as a building block for services that need to store data over HTTP on
+    Walrus Mainnet, where an open publisher is undesirable because of the SUI and WAL cost of
+    publishing to Walrus.
+- [Operating
+    Publisher](https://docs.wal.app/docs/operator-guide/publishers/operating-publisher.md): The
+    publisher and daemon perform on-chain actions and require a Sui wallet with sufficient SUI and
+    WAL balances. To handle many parallel requests without object conflicts, they create internal
+    sub-wallets (introduced in version 1.4.0) funded from the main wallet.
 - [Signed Binaries](https://docs.wal.app/docs/operator-guide/signed-binaries.md): Walrus release
     binaries and Docker images are signed using Cosign with a GCP KMS key. Each binary has a
-    corresponding .sig file containing its signature, and Docker image signatures are stored in the
-    registry.
-- [Storage Node FAQ](https://docs.wal.app/docs/operator-guide/storage-node-faq.md): The storage
-    node must have a wallet compatible with the Sui Rust SDK. This cannot be a hardware wallet or
-    anything that requires user interaction for transactions, because the node needs to send
-    transactions as part of normal operation. The walrus-node setup command creates such a wallet.
-- [Storage Node Maintenance](https://docs.wal.app/docs/operator-guide/storage-node-maintenance.md):
+    corresponding .sig file containing its signature. Docker image signatures are stored in the
+    registry. The easiest way to download and verify binaries is to use the provided script.
+- [Stake](https://docs.wal.app/docs/operator-guide/stake.md): In Walrus, anyone can delegate stake
+    to storage nodes and, by doing so, influence which storage nodes get selected for the committee
+    in future epochs and how many shards these nodes hold.
+- [Backup Restore
+    Guide](https://docs.wal.app/docs/operator-guide/storage-nodes/backup-restore-guide.md): Walrus
+    storage nodes provide backup and restore functionality for the primary database containing blob
+    data. This guide covers configuration requirements, operational procedures, and best practices
+    for automated and manual backup processes and restore operations.
+- [Commission
+    Governance](https://docs.wal.app/docs/operator-guide/storage-nodes/commission-governance.md):
+    You can change most node parameters using StorageNodeCap, and the storage node automatically
+    updates them based on the values in the node configuration. However, authorization for contract
+    upgrades and withdrawing the storage node commission is handled separately.
+- [Storage Nodes](https://docs.wal.app/docs/operator-guide/storage-nodes.md): This section covers
+    everything you need to set up and operate a Walrus storage node.
+- [Storage Node FAQ](https://docs.wal.app/docs/operator-guide/storage-nodes/storage-node-faq.md):
+    The storage node must have a wallet compatible with the Sui Rust SDK. This cannot be a hardware
+    wallet or anything that requires user interaction for transactions, because the node needs to
+    send transactions as part of normal operation. The walrus-node setup command creates such a
+    wallet.
+- [Storage Node
+    Maintenance](https://docs.wal.app/docs/operator-guide/storage-nodes/storage-node-maintenance.md):
     This page covers the ongoing operation of your Walrus storage node after initial setup. Back up
-    the /opt/walrus/config directory. For database backups, see the Backup and Restore guide. The
+    the /opt/walrus/config directory. For database backups, see the Backup and Restore Guide. The
     following metrics are the most important for monitoring node health.
-- [Storage Node Migration](https://docs.wal.app/docs/operator-guide/storage-node-migration.md):
+- [Storage Node
+    Migration](https://docs.wal.app/docs/operator-guide/storage-nodes/storage-node-migration.md):
     This guide covers migrating a Walrus storage node to new hardware. It assumes you run the node
     (and optionally an aggregator and publisher) on the same host. To reduce downtime, start by
     transferring all data while the old host is still running. Wait for each command to finish
     before proceeding.
-- [Storage Node Setup](https://docs.wal.app/docs/operator-guide/storage-node-setup.md): This page
+- [Storage Node
+    Setup](https://docs.wal.app/docs/operator-guide/storage-nodes/storage-node-setup.md): This page
     walks you through the full initial setup of a Walrus storage node, from system preparation to
     registration and first startup. If you deviate from the standard setup below (user,
     directories, ports), make sure to adjust later steps accordingly.
-- [Storage Node](https://docs.wal.app/docs/operator-guide/storage-node.md): This section covers
-    everything you need to set up and operate a Walrus storage node.
-- [Upload Relay](https://docs.wal.app/docs/operator-guide/upload-relay.md): Walrus enables dApps to
-    store data from within their end-users' browsers having low to moderate machine specifications
+- [Upload Relay](https://docs.wal.app/docs/operator-guide/upload-relay.md): Walrus enables apps to
+    store data from within end-user browsers that have low to moderate machine specifications
     (mobile devices, low-powered laptops, and so on).
 
 ## Sites
@@ -208,13 +224,20 @@ Important notes:
     the headers object are the exact paths of the resources (no wildcards), and the values are
     lists of key-value pairs corresponding to the headers that the portal attaches to the response.
 - [Bringing Your Own
-    Domain](https://docs.wal.app/docs/sites/custom-domains/bringing-your-own-domain.md): There
-    might be cases where you want to host a Walrus Site under a specific domain without following
-    the default naming convention of .
+    Domain](https://docs.wal.app/docs/sites/custom-domains/bringing-your-own-domain.md): By
+    default, Walrus Sites are served through a portal at a subdomain address like
+    https://example.wal.app. If you want to serve your site at a classic DNS domain you own, for
+    example https://example.com, you can do so by deploying your own portal and configuring it to
+    serve only your site.
+- [DNS Configuration](https://docs.wal.app/docs/sites/custom-domains/dns-configuration.md): After
+    setting up your portal and configuring it for your domain, you need to configure your domain's
+    DNS to route traffic to the server running your portal. This guide covers adding DNS records,
+    setting up HTTPS with a reverse proxy, verifying propagation, and troubleshooting common DNS
+    issues.
 - [Setting A SuiNS Name](https://docs.wal.app/docs/sites/custom-domains/setting-a-suins-name.md):
-    Browsing sites with Base36 subdomains, for example, is no longer possible using the wal.app
-    portal. Base36 subdomains are still supported if you use a local server or an alternative
-    portal. To browse walrus sites using the wal.app portal, you must use SuiNS names instead.
+    Sui Name Service (SuiNS) provides human-readable names for Walrus Sites, similar to how DNS
+    works for websites. Instead of sharing a long base36 subdomain like , you can link a SuiNS name
+    to your site's object ID and browse it at a readable address like my-project.wal.app.
 - [Installing The Site
     Builder](https://docs.wal.app/docs/sites/getting-started/installing-the-site-builder.md): The
     site-builder is a CLI tool that lets you create, edit, and publish Walrus Sites. You can
@@ -228,18 +251,17 @@ Important notes:
 - [Using The Site
     Builder](https://docs.wal.app/docs/sites/getting-started/using-the-site-builder.md): This
     reference page provides details on site-builder configuration and CLI commands.
-- [Sites](https://docs.wal.app/docs/sites.md): This tutorial walks you through the steps necessary
-    to publish a Walrus Site. We also provide the instructions on how to add a SuiNS name to it for
-    convenient browsing. Install and setup the Walrus Sites site-builder tool for development.
-    Publish your first Walrus Site using the site-builder tool.
-- [Components](https://docs.wal.app/docs/sites/introduction/components.md): Walrus Sites are
-    "web"-sites that use Sui and Walrus as their underlying technology. They are a prime example of
-    how Walrus can be used to build new and exciting decentralized applications. Anyone can build
-    and deploy a Walrus Site and make it accessible to the world!
-- [Technical Overview](https://docs.wal.app/docs/sites/introduction/technical-overview.md): Walrus
-    Sites are enabled by Sui and Walrus. The resources of a Walrus Site (html, css, js, images, and
-    so on) are stored on Walrus, while the main entry point to it is an object stored on Sui that
-    contains the metadata for the site and points to the Walrus blob IDs.
+- [Sites](https://docs.wal.app/docs/sites.md): Walrus Sites are decentralized websites built on Sui
+    and Walrus. Your site's files are stored on Walrus, a decentralized storage network, while a
+    Sui smart contract records ownership and maps each resource path to its content.
+- [Components](https://docs.wal.app/docs/sites/introduction/components.md): A Walrus Site is made
+    up of 4 main components that work together: the site's files stored on Walrus, a Sui object
+    that indexes those files as resources, the site-builder CLI that publishes and updates the
+    site, and a portal that serves the site to browsers.
+- [Technical Overview](https://docs.wal.app/docs/sites/introduction/technical-overview.md): A
+    Walrus Site is a static web site published entirely on-chain, with no origin server. Sui stores
+    the site's ownership and resource index, and Walrus stores the resource files themselves. A
+    portal bridges these systems and serves the site to the browser over standard HTTP.
 - [Known Restrictions](https://docs.wal.app/docs/sites/known-restrictions.md): Walrus Sites can be
     used to deploy almost any form of traditional static Web2 website built for modern browsers.
     There are, however, a number of restrictions that a developer should keep in mind when creating
@@ -249,7 +271,7 @@ Important notes:
     deploy your own Walrus Sites portal, you might expose the same site under multiple hostnames: A
     SuiNS domain: A human-readable names registered on-chain, for example snowreads.wal.app.
     Base36: Subdomains derived directly from the site object ID, for example 1myb…xd.portal.com.
-- [Linking](https://docs.wal.app/docs/sites/linking/linking.md): This feature is currently
+- [Linking To](https://docs.wal.app/docs/sites/linking/linking-to.md): This feature is currently
     unavailable on server-side portals. If you are browsing a Walrus Site on https://wal.app, you
     are not able to use Walrus Sites links. Certain types of links on Walrus Sites work differently
     than on a regular website.
@@ -270,12 +292,9 @@ Important notes:
     Walrus Sites authenticate the data that is served on the client side from the Walrus storage,
     guaranteeing with various degrees of confidence depending on the setup, that the site data is
     authentic and has not been tampered with by a malicious aggregator.
-
-## Stake
-
-- [Stake](https://docs.wal.app/docs/stake.md): In Walrus, anyone can delegate stake to storage
-    nodes and, by doing so, influence which storage nodes get selected for the committee in future
-    epochs and how many shards these nodes hold.
+- [Troubleshooting](https://docs.wal.app/docs/sites/troubleshooting.md): This page provides
+    solutions to common errors when deploying and browsing Walrus Sites. Errors in this section
+    relate to site-builder configuration. The site-builder binary is not in your $PATH.
 
 ## Troubleshooting
 
@@ -289,30 +308,1482 @@ Important notes:
     storage for application and user data. All data stored on Walrus is public and can be accessed
     by anyone.
 
-## Glossary
-
-- [Glossary](https://docs.wal.app/docs/glossary.md)
-
 ## Optional
 
 ### Tusky Migration Guide
 
-- [Tusky Migration Guide](https://docs.wal.app/docs/tusky-migration-guide.md): As of December 19,
-    2025, the storage service Tusky is shutting down. Data stored on Walrus through Tusky is still
-    safe and accessible. During Tusky's sunsetting period, you can continue reading your data,
-    however you must either migrate to using Walrus directly or through alternative tooling.
+-
+ 
+[
+T
+u
+s
+k
+y
+ 
+M
+i
+g
+r
+a
+t
+i
+o
+n
+ 
+G
+u
+i
+d
+e
+]
+(
+h
+t
+t
+p
+s
+:
+/
+/
+d
+o
+c
+s
+.
+w
+a
+l
+.
+a
+p
+p
+/
+d
+o
+c
+s
+/
+t
+u
+s
+k
+y
+-
+m
+i
+g
+r
+a
+t
+i
+o
+n
+-
+g
+u
+i
+d
+e
+.
+m
+d
+)
+:
+ 
+A
+s
+ 
+o
+f
+ 
+D
+e
+c
+e
+m
+b
+e
+r
+ 
+1
+9
+,
+ 
+2
+0
+2
+5
+,
+ 
+t
+h
+e
+ 
+s
+t
+o
+r
+a
+g
+e
+ 
+s
+e
+r
+v
+i
+c
+e
+ 
+T
+u
+s
+k
+y
+ 
+i
+s
+ 
+s
+h
+u
+t
+t
+i
+n
+g
+ 
+d
+o
+w
+n
+.
+ 
+D
+a
+t
+a
+ 
+s
+t
+o
+r
+e
+d
+ 
+o
+n
+ 
+W
+a
+l
+r
+u
+s
+ 
+t
+h
+r
+o
+u
+g
+h
+ 
+T
+u
+s
+k
+y
+ 
+i
+s
+ 
+s
+t
+i
+l
+l
+ 
+s
+a
+f
+e
+ 
+a
+n
+d
+ 
+a
+c
+c
+e
+s
+s
+i
+b
+l
+e
+.
+ 
+D
+u
+r
+i
+n
+g
+ 
+T
+u
+s
+k
+y
+'
+s
+ 
+s
+u
+n
+s
+e
+t
+t
+i
+n
+g
+ 
+p
+e
+r
+i
+o
+d
+,
+ 
+y
+o
+u
+ 
+c
+a
+n
+ 
+c
+o
+n
+t
+i
+n
+u
+e
+ 
+r
+e
+a
+d
+i
+n
+g
+ 
+y
+o
+u
+r
+ 
+d
+a
+t
+a
+,
+ 
+h
+o
+w
+e
+v
+e
+r
+ 
+y
+o
+u
+ 
+m
+u
+s
+t
+ 
+e
+i
+t
+h
+e
+r
+ 
+m
+i
+g
+r
+a
+t
+e
+ 
+t
+o
+ 
+u
+s
+i
+n
+g
+ 
+W
+a
+l
+r
+u
+s
+ 
+d
+i
+r
+e
+c
+t
+l
+y
+ 
+o
+r
+ 
+t
+h
+r
+o
+u
+g
+h
+ 
+a
+l
+t
+e
+r
+n
+a
+t
+i
+v
+e
+ 
+t
+o
+o
+l
+i
+n
+g
+.
 
 ### Legal
 
-- [Privacy](https://docs.wal.app/docs/legal/privacy.md): Last Updated: February 10, 2024 This
-    Privacy Policy is designed to help you understand how Walrus Foundation (collectively called
-    the “Organization", "we," "us," and "our") collects, uses, and shares your personal information
-    and to help you understand and exercise your privacy rights in accordance with applicable law.
-- [Testnet TOS](https://docs.wal.app/docs/legal/testnet_tos.md): Last updated: March 26, 2025 By
-    using Walrus Testnet software, technologies, tools, and other services (collectively “Testnet”)
-    offered by Walrus Foundation ("Walrus Foundation", "we", "our"), you agree to the general
-    Walrus Terms of Service and these additional Testnet Terms of Service (together, the “Terms”).
-- [Walrus General TOS](https://docs.wal.app/docs/legal/walrus_general_tos.md): Please read these
-    Terms of Service (the “Terms”) and our Privacy Policy carefully because they govern your use of
-    the website, the user interface, and other offerings located at walrus.xyz, (the “Site”)
-    offered by Walrus Foundation (“Walrus Foundation,” “we,” “our”).
+-
+ 
+[
+P
+r
+i
+v
+a
+c
+y
+]
+(
+h
+t
+t
+p
+s
+:
+/
+/
+d
+o
+c
+s
+.
+w
+a
+l
+.
+a
+p
+p
+/
+d
+o
+c
+s
+/
+l
+e
+g
+a
+l
+/
+p
+r
+i
+v
+a
+c
+y
+.
+m
+d
+)
+:
+ 
+L
+a
+s
+t
+ 
+U
+p
+d
+a
+t
+e
+d
+:
+ 
+F
+e
+b
+r
+u
+a
+r
+y
+ 
+1
+0
+,
+ 
+2
+0
+2
+4
+ 
+T
+h
+i
+s
+ 
+P
+r
+i
+v
+a
+c
+y
+ 
+P
+o
+l
+i
+c
+y
+ 
+i
+s
+ 
+d
+e
+s
+i
+g
+n
+e
+d
+ 
+t
+o
+ 
+h
+e
+l
+p
+ 
+y
+o
+u
+ 
+u
+n
+d
+e
+r
+s
+t
+a
+n
+d
+ 
+h
+o
+w
+ 
+W
+a
+l
+r
+u
+s
+ 
+F
+o
+u
+n
+d
+a
+t
+i
+o
+n
+ 
+(
+c
+o
+l
+l
+e
+c
+t
+i
+v
+e
+l
+y
+ 
+c
+a
+l
+l
+e
+d
+ 
+t
+h
+e
+ 
+“
+O
+r
+g
+a
+n
+i
+z
+a
+t
+i
+o
+n
+"
+,
+ 
+"
+w
+e
+,
+"
+ 
+"
+u
+s
+,
+"
+ 
+a
+n
+d
+ 
+"
+o
+u
+r
+"
+)
+ 
+c
+o
+l
+l
+e
+c
+t
+s
+,
+ 
+u
+s
+e
+s
+,
+ 
+a
+n
+d
+ 
+s
+h
+a
+r
+e
+s
+ 
+y
+o
+u
+r
+ 
+p
+e
+r
+s
+o
+n
+a
+l
+ 
+i
+n
+f
+o
+r
+m
+a
+t
+i
+o
+n
+ 
+a
+n
+d
+ 
+t
+o
+ 
+h
+e
+l
+p
+ 
+y
+o
+u
+ 
+u
+n
+d
+e
+r
+s
+t
+a
+n
+d
+ 
+a
+n
+d
+ 
+e
+x
+e
+r
+c
+i
+s
+e
+ 
+y
+o
+u
+r
+ 
+p
+r
+i
+v
+a
+c
+y
+ 
+r
+i
+g
+h
+t
+s
+ 
+i
+n
+ 
+a
+c
+c
+o
+r
+d
+a
+n
+c
+e
+ 
+w
+i
+t
+h
+ 
+a
+p
+p
+l
+i
+c
+a
+b
+l
+e
+ 
+l
+a
+w
+.
+-
+ 
+[
+T
+e
+s
+t
+n
+e
+t
+ 
+T
+O
+S
+]
+(
+h
+t
+t
+p
+s
+:
+/
+/
+d
+o
+c
+s
+.
+w
+a
+l
+.
+a
+p
+p
+/
+d
+o
+c
+s
+/
+l
+e
+g
+a
+l
+/
+t
+e
+s
+t
+n
+e
+t
+_
+t
+o
+s
+.
+m
+d
+)
+:
+ 
+L
+a
+s
+t
+ 
+u
+p
+d
+a
+t
+e
+d
+:
+ 
+M
+a
+r
+c
+h
+ 
+2
+6
+,
+ 
+2
+0
+2
+5
+ 
+B
+y
+ 
+u
+s
+i
+n
+g
+ 
+W
+a
+l
+r
+u
+s
+ 
+T
+e
+s
+t
+n
+e
+t
+ 
+s
+o
+f
+t
+w
+a
+r
+e
+,
+ 
+t
+e
+c
+h
+n
+o
+l
+o
+g
+i
+e
+s
+,
+ 
+t
+o
+o
+l
+s
+,
+ 
+a
+n
+d
+ 
+o
+t
+h
+e
+r
+ 
+s
+e
+r
+v
+i
+c
+e
+s
+ 
+(
+c
+o
+l
+l
+e
+c
+t
+i
+v
+e
+l
+y
+ 
+“
+T
+e
+s
+t
+n
+e
+t
+”
+)
+ 
+o
+f
+f
+e
+r
+e
+d
+ 
+b
+y
+ 
+W
+a
+l
+r
+u
+s
+ 
+F
+o
+u
+n
+d
+a
+t
+i
+o
+n
+ 
+(
+"
+W
+a
+l
+r
+u
+s
+ 
+F
+o
+u
+n
+d
+a
+t
+i
+o
+n
+"
+,
+ 
+"
+w
+e
+"
+,
+ 
+"
+o
+u
+r
+"
+)
+,
+ 
+y
+o
+u
+ 
+a
+g
+r
+e
+e
+ 
+t
+o
+ 
+t
+h
+e
+ 
+g
+e
+n
+e
+r
+a
+l
+ 
+W
+a
+l
+r
+u
+s
+ 
+T
+e
+r
+m
+s
+ 
+o
+f
+ 
+S
+e
+r
+v
+i
+c
+e
+ 
+a
+n
+d
+ 
+t
+h
+e
+s
+e
+ 
+a
+d
+d
+i
+t
+i
+o
+n
+a
+l
+ 
+T
+e
+s
+t
+n
+e
+t
+ 
+T
+e
+r
+m
+s
+ 
+o
+f
+ 
+S
+e
+r
+v
+i
+c
+e
+ 
+(
+t
+o
+g
+e
+t
+h
+e
+r
+,
+ 
+t
+h
+e
+ 
+“
+T
+e
+r
+m
+s
+”
+)
+.
+-
+ 
+[
+W
+a
+l
+r
+u
+s
+ 
+G
+e
+n
+e
+r
+a
+l
+ 
+T
+O
+S
+]
+(
+h
+t
+t
+p
+s
+:
+/
+/
+d
+o
+c
+s
+.
+w
+a
+l
+.
+a
+p
+p
+/
+d
+o
+c
+s
+/
+l
+e
+g
+a
+l
+/
+w
+a
+l
+r
+u
+s
+_
+g
+e
+n
+e
+r
+a
+l
+_
+t
+o
+s
+.
+m
+d
+)
+:
+ 
+P
+l
+e
+a
+s
+e
+ 
+r
+e
+a
+d
+ 
+t
+h
+e
+s
+e
+ 
+T
+e
+r
+m
+s
+ 
+o
+f
+ 
+S
+e
+r
+v
+i
+c
+e
+ 
+(
+t
+h
+e
+ 
+“
+T
+e
+r
+m
+s
+”
+)
+ 
+a
+n
+d
+ 
+o
+u
+r
+ 
+P
+r
+i
+v
+a
+c
+y
+ 
+P
+o
+l
+i
+c
+y
+ 
+c
+a
+r
+e
+f
+u
+l
+l
+y
+ 
+b
+e
+c
+a
+u
+s
+e
+ 
+t
+h
+e
+y
+ 
+g
+o
+v
+e
+r
+n
+ 
+y
+o
+u
+r
+ 
+u
+s
+e
+ 
+o
+f
+ 
+t
+h
+e
+ 
+w
+e
+b
+s
+i
+t
+e
+,
+ 
+t
+h
+e
+ 
+u
+s
+e
+r
+ 
+i
+n
+t
+e
+r
+f
+a
+c
+e
+,
+ 
+a
+n
+d
+ 
+o
+t
+h
+e
+r
+ 
+o
+f
+f
+e
+r
+i
+n
+g
+s
+ 
+l
+o
+c
+a
+t
+e
+d
+ 
+a
+t
+ 
+w
+a
+l
+r
+u
+s
+.
+x
+y
+z
+,
+ 
+(
+t
+h
+e
+ 
+“
+S
+i
+t
+e
+”
+)
+ 
+o
+f
+f
+e
+r
+e
+d
+ 
+b
+y
+ 
+W
+a
+l
+r
+u
+s
+ 
+F
+o
+u
+n
+d
+a
+t
+i
+o
+n
+ 
+(
+“
+W
+a
+l
+r
+u
+s
+ 
+F
+o
+u
+n
+d
+a
+t
+i
+o
+n
+,
+”
+ 
+“
+w
+e
+,
+”
+ 
+“
+o
+u
+r
+”
+)
+.
