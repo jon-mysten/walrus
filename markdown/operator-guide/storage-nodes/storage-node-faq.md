@@ -1,3 +1,5 @@
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
 ## Which wallets do you need? {#wallets}
 
 - The storage node must have a wallet compatible with the Sui Rust SDK. This **cannot** be a hardware wallet or anything that requires user interaction for transactions, because the node needs to send transactions as part of normal operation.
@@ -5,7 +7,7 @@
   - This wallet is stored on the storage node and should not hold too many funds.
 - The publisher needs a **separate wallet** from the storage node, even if running on the same host. See [Publisher setup](/docs/operator-guide/publishers/operating-publisher) for details.
 - The aggregator does not need a wallet because it never sends transactions.
-- For collecting commission and performing governance operations, you can designate other wallets (including hardware or multi-sig wallets). See [Commission and Governance](/docs/operator-guide/commission-governance) for details.
+- For collecting commission and performing governance operations, you can designate other wallets (including hardware or multi-sig wallets). See [Commission and Governance](/docs/operator-guide/storage-nodes/commission-governance) for details.
 
 ## How can you use TLS? {#tls}
 
@@ -19,13 +21,10 @@ tls:
   certificate_path: /opt/walrus/config/tls/fullchain.pem
 ```
 
-:::caution
-
-Do not disable TLS. While the option exists, very few correct reverse-proxy configurations work without it.
-
-:::
-
-If you set up certbot as described in the [Storage Node Setup guide](/docs/operator-guide/storage-node-setup#tls-setup), it reuses the same key when renewing (`--reuse-key`).
+> **Caution**
+>
+> Do not disable TLS. While the option exists, very few correct reverse-proxy configurations work without it.
+If you set up certbot as described in the [Storage Node Setup guide](/docs/operator-guide/storage-nodes/storage-node-setup#tls-setup), it reuses the same key when renewing (`--reuse-key`).
 
 If you ever must change the key, the node detects changes and updates onchain information automatically. It checks for changes every 15 minutes and during startup. Other nodes might take some time to pick up the change, so only do this when necessary.
 

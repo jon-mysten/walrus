@@ -1,3 +1,5 @@
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
 In its base configuration, a Walrus Site serves static assets through a portal. However, many modern web applications require more advanced features, such as custom headers, client-side routing, and human-readable information.
 
 The `site-builder` can read a `ws-resources.json` configuration file, in which you can directly specify these advanced features.
@@ -23,6 +25,11 @@ The file is JSON-formatted, and looks like the following:
     "/accounts/*": "/accounts.html",
     "/path/assets/*": "/assets/asset_router.html"
   },
+  "redirects": {
+    "/old-game": { "location": "/index.html", "status_code": 308 },
+    "/walrus-docs": { "location": "https://docs.wal.app", "status_code": 301 },
+    "/redirects/**/*": { "location": "/walrus.svg", "status_code": 302 }
+  },
   "metadata": {
     "link": "https://subdomain.wal.app",
     "image_url": "https://www.walrus.xyz/walrus-site",
@@ -36,12 +43,9 @@ The file is JSON-formatted, and looks like the following:
 }
 ```
 
-:::info
-
-The `ws-resources.json` file expects the field names to be in `snake_case`.
-
-:::
-
+> **Info**
+>
+> The `ws-resources.json` file expects the field names to be in `snake_case`.
 ## Specifying HTTP headers
 
 The `headers` section lets you attach custom HTTP response headers to specific resources, controlling caching, content types, encoding, and download behaviour. Headers are specified per exact file path and override the portal's defaults. Refer to the [HTTP headers reference page](/docs/sites/configuration/specifying-http-headers) for more information.
@@ -71,9 +75,23 @@ The `routes` section allows you to specify client-side routing rules for your si
 }
 ```
 
-All routing is a rewrite, not a redirect (the browser URL never changes). There is no server, so redirects must be implemented client-side. Routes are stored onchain and validated at deploy time.
+For full syntax, matching rules, and framework examples, refer to the [routes reference page](/docs/sites/linking/redirects).
 
-For full syntax, matching rules, and framework examples, refer to the [routes reference page](/docs/sites/configuration/setting-up-routing-rules).
+## Setting up redirects 
+
+The `redirects` section allows you to specify server-side redirects for your site.
+
+```json 
+{
+"redirects": {
+    "/old-game": { "location": "/index.html", "status_code": 308 },
+    "/walrus-docs": { "location": "https://docs.wal.app", "status_code": 301 },
+    "/redirects/**/*": { "location": "/walrus.svg", "status_code": 302 }
+  }
+}
+```
+
+For full syntax, matching rules, and framework examples, refer to the [redirects reference page](/docs/sites/linking/redirects).
 
 ## Adding metadata
 
@@ -101,6 +119,9 @@ The optional `object_id` field in the `ws-resources.json` file stores the Sui ob
 
 The [`site-builder deploy` command](/docs/sites/getting-started/using-the-site-builder) primarily uses this field to identify an existing site for updates. If a valid `object_id` is present, `deploy` targets that site for modifications. If this field is missing and no `--object-id` CLI flag is used, `deploy` publishes a new site. If successful, then the command automatically populates this `object_id` field in your `ws-resources.json`.
 
+> **Caution**
+>
+> Preserve `ws-resources.json` after the first deployment. If the file is missing in a later deployment, `site-builder` creates a new site object instead of updating the existing site.
 ## Ignoring files from being uploaded
 
 You can use the optional `ignore` field to exclude certain files or folders from being published. This is useful when you want to keep development files, secrets, or temporary assets out of the final build.

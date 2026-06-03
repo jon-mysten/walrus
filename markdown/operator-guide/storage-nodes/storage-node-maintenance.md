@@ -1,8 +1,10 @@
-This page covers the ongoing operation of your Walrus storage node after [initial setup](/docs/operator-guide/storage-node-setup).
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
+This page covers the ongoing operation of your Walrus storage node after [initial setup](/docs/operator-guide/storage-nodes/storage-node-setup).
 
 ## Important data to back up
 
-Back up the `/opt/walrus/config` directory. For database backups, see the [Backup and Restore Guide](/docs/operator-guide/backup-restore-guide).
+Back up the `/opt/walrus/config` directory. For database backups, see the [Backup and Restore Guide](/docs/operator-guide/storage-nodes/backup-restore-guide).
 
 ## Key metrics and alerts
 
@@ -59,25 +61,21 @@ $ sudo systemctl start walrus-aggregator.service  # if applicable
 $ sudo systemctl start walrus-publisher.service   # if applicable
 ```
 
-:::info
+> **Info**
+>
+> You are generally expected to upgrade within 24 hours of a new release. In emergency situations, immediate action is appreciated. Subscribe to the [Walrus release calendar](https://calendar.google.com/calendar/u/0/embed?src=c_97763fcda7894da7ddcd68595a797397b9b4294b69603a52e30d4fa0c3fee2bb@group.calendar.google.com) to stay informed about upcoming releases.
+## Database corruption
 
-You are generally expected to upgrade within 24 hours of a new release. In emergency situations, immediate action is appreciated. Subscribe to the [Walrus release calendar](https://calendar.google.com/calendar/u/0/embed?src=c_97763fcda7894da7ddcd68595a797397b9b4294b69603a52e30d4fa0c3fee2bb@group.calendar.google.com) to stay informed about upcoming releases.
+If the node database becomes corrupted (for example, after an unclean shutdown), do not attempt to repair it yourself. Reach out to the Walrus Core team on Discord for guidance before taking any recovery action.
 
-:::
-
-## Repair the database
-
-If the node database becomes corrupted (for example, after an unclean shutdown), you can attempt a repair:
-
-```sh
-$ /opt/walrus/bin/walrus-node db-tool repair-db --db-path /opt/walrus/db
-```
-
-If the repair is unsuccessful, restore from a backup. See the [Backup and Restore Guide](/docs/operator-guide/backup-restore-guide).
+> **Warning**
+>
+> Previous versions of `walrus-node` exposed a `db-tool repair-db` command. That command has been removed because it can silently leave the database in an inconsistent state. Do not run it from older binaries.
+If recovery is not possible, restore from a backup. See the [Backup and Restore Guide](/docs/operator-guide/storage-nodes/backup-restore-guide).
 
 ## Update onchain parameters
 
-To modify node parameters (capacity, voting parameters, metadata, and others), edit the `/opt/walrus/config/walrus-node.yaml` file. The node automatically picks up changes and updates onchain information. See the [Storage Node FAQ on TLS](/docs/operator-guide/storage-node-faq#tls) for details on how automatic configuration updates work.
+To modify node parameters (capacity, voting parameters, metadata, and others), edit the `/opt/walrus/config/walrus-node.yaml` file. The node automatically picks up changes and updates onchain information. See the [Storage Node FAQ on TLS](/docs/operator-guide/storage-nodes/storage-node-faq#tls) for details on how automatic configuration updates work.
 
 Avoid changing the node name, keys, and network address unless necessary because this causes some friction in the network.
 
@@ -85,8 +83,6 @@ Avoid changing the node name, keys, and network address unless necessary because
 
 Several community members have created tools for monitoring Walrus services. These tools are listed on [awesome-walrus](https://github.com/MystenLabs/awesome-walrus).
 
-:::caution
-
-The Walrus team does not provide or officially support community tools.
-
-:::
+> **Caution**
+>
+> The Walrus team does not provide or officially support community tools.

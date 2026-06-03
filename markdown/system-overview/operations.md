@@ -1,3 +1,5 @@
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
 Blobs can be interacted with through familiar file system operations such as uploading, reading, downloading, and deleting.
 
 ## Upload
@@ -8,12 +10,9 @@ Use the following command to upload a file to Walrus
 $ walrus store file.txt --epochs 2 --context testnet
 ```
 
-:::danger
-
-All blobs stored in Walrus are public and discoverable by all. Do not store secrets or private data without additional confidentiality measures, such as encrypting with [Seal](/docs/data-security).
-
-:::
-
+> **Danger**
+>
+> All blobs stored in Walrus are public and discoverable by all. Do not store secrets or private data without additional confidentiality measures, such as encrypting with [Seal](/docs/data-security).
 When you run this command, the steps executed by the client are:
 
 1. Acquire a storage resource of appropriate size and duration onchain, either directly from the Walrus system object or a secondary market. Storage resources can be split, merged, and transferred.
@@ -44,7 +43,7 @@ These steps are also performed by a publisher that accepts and publishes blobs t
 
 #### Maximum blob size
 
-The maximum blob size can be queried through the [`walrus info`](/docs/walrus-client/storing-blobs#walrus-system-information) CLI command. The maximum blob size is currently 13.3&nbsp;GB. You can store larger blobs by splitting them into smaller chunks.
+The maximum blob size can be queried through the [`walrus info`](/docs/walrus-client/storing-blobs#walrus-system-information) CLI command. The maximum blob size is currently 13.3&nbsp;GiB. You can store larger blobs by splitting them into smaller chunks.
 
 Blobs are stored for the number of epochs specified at the time they are stored. Walrus storage nodes ensure the blob is available through the number of epochs specified. Mainnet uses an epoch duration of 2 weeks.
 

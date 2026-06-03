@@ -1,17 +1,13 @@
-Walrus release binaries and Docker images are signed using [Cosign](https://github.com/sigstore/cosign) with a GCP KMS key. Each binary has a corresponding `.sig` file containing its signature. Docker image signatures are stored in the registry.
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
 
-<Tabs>
-<TabItem value="prereq" label="Prerequisites">
+Walrus release binaries and Docker images are signed using [Cosign](https://github.com/sigstore/cosign) with a GCP KMS key. Each binary has a corresponding `.sig` file containing its signature. Docker image signatures are stored in the registry.
 
 - [x] Install [Cosign](https://docs.sigstore.dev/cosign/system_config/installation/)
 - [x] Install the [gcloud CLI](https://cloud.google.com/sdk/docs/install) (for downloading binaries)
 
-</TabItem>
-</Tabs>
-
 ## Use the verification script
 
-The easiest way to download and verify binaries is to use the provided script. See also the [Storage Node Setup](/docs/operator-guide/storage-node-setup#binaries) guide for standard binary downloads without verification.
+The easiest way to download and verify binaries is to use the provided script. See also the [Storage Node Setup](/docs/operator-guide/storage-nodes/storage-node-setup#binaries) guide for standard binary downloads without verification.
 
 ```bash
 # Download the script
@@ -86,12 +82,9 @@ If successful, the output displays:
 Verified OK
 ```
 
-:::info
-
-The `--insecure-ignore-tlog` flag is required because signatures are not uploaded to the Sigstore transparency log. Verification is still cryptographically secure using the signing key.
-
-:::
-
+> **Info**
+>
+> The `--insecure-ignore-tlog` flag is required because signatures are not uploaded to the Sigstore transparency log. Verification is still cryptographically secure using the signing key.
 ### Verify using the GCP KMS key directly
 
 If you have GCP access:

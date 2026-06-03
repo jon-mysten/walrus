@@ -1,5 +1,10 @@
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
 Walrus provides decentralized storage for application and user data. All data stored on Walrus is public and can be accessed by anyone. While Walrus natively provides some data availability and integrity guarantees, use cases that require data confidentiality should use additional encryption mechanisms such as [Seal](https://seal-docs.wal.app/) and [Nautilus](https://docs.sui.io/concepts/cryptography/nautilus).
 
+> **Caution**
+>
+> Blob IDs are not secrets. Anyone with a blob ID can fetch the blob, so encrypt private data before uploading it to Walrus.
 ## Data availability
 
 The encoding mechanisms applied by Walrus guarantee that blobs can be written and remain available as long as 2/3 of the shards are operated by storage nodes that act honestly. After data is written, reads are possible even if as few as 1/3 of the nodes are available.
@@ -18,7 +23,7 @@ Walrus guarantees that any data read corresponds to what the user who uploaded t
 
 Walrus does not provide native encryption for data. By default, all blobs stored in Walrus are public and discoverable by everyone. If your use case needs encryption or access control, you need to secure data before uploading to Walrus.
 
-You can use any encryption and access-control mechanism you prefer. However, if you want onchain access control, [Seal](https://seal-docs.wal.app/) is the most powerful and straightforward option.
+You can use any encryption and access-control mechanism you prefer. If you want onchain access control, [Seal](https://seal-docs.wal.app/) is the most powerful and straightforward option.
 
 Seal allows you to encrypt data using threshold encryption, where no single party holds the full decryption key. You can define onchain access policies that determine who can decrypt the data and under what conditions, and store encrypted content on Walrus while keeping decryption logic verifiable and flexible.
 
@@ -28,6 +33,15 @@ Seal integrates seamlessly with Walrus and is recommended for any use cases invo
 - Time-locked or token-gated data
 - Data shared between trusted parties or roles
 
+> **Seal transactions need an explicit sender**
+>
+> When building a programmable transaction block (PTB) for Seal policy checks, set the transaction sender before passing the PTB to Seal. The sender must match the address that is requesting decryption access.
+> 
+> ```ts
+tx.setSender(address);
+```
+> 
+> If the sender is missing or does not match, decryption can fail with `Transaction was not signed by the correct sender`.
 To get started, refer to [Seal SDK](https://www.npmjs.com/package/@mysten/seal).
 
 ## Nautilus: Secure and verifiable off-chain computation

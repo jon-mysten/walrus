@@ -1,22 +1,47 @@
-{/* https://linear.app/mysten-labs/issue/DOCS-633/system-overviewstorage-costs */}
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
 
-Storing blobs on Walrus Mainnet incurs 2 separate costs:
+When choosing a platform to store and verify data, you should consider reliability, uptime, availability, programmability, and price predictability. Walrus offers a fixed, USD-denominated storage cost of **$0.023/GB/month**, allowing you to budget and scale with confidence.
 
-- **WAL** for the storage operation. See [WAL tokenomics](https://www.walrus.xyz/wal-token) and the [Walrus delegated proof of stake system](/walrus.pdf) for more details.
+## Estimate storage costs
 
-- **SUI** for executing transactions on Sui Mainnet. See [SUI tokenomics](https://docs.sui.io/concepts/tokenomics) and [SUI gas fee calculation](https://docs.sui.io/concepts/tokenomics/gas-in-sui) for more details.
+Use the embedded Walrus Cost Calculator to estimate storage costs before you upload. The calculator models storage size, duration, encoding overhead, WAL storage costs, and SUI transaction costs together.
 
-:::caution
+If the calculator does not load, open the [Walrus Cost Calculator](https://costcalculator.wal.app/) in a new tab.
 
-There are plans to stabilize costs to USD so that storage fees are not subject to WAL fluctuations.
+For command-line estimates, run `walrus info` to view current storage prices and upload fees. You can also run `walrus store --dry-run ...` to see the encoded size used in WAL cost calculations without submitting transactions.
 
-:::
+## How pricing works
 
-## Cost calculator
+Storage on Walrus is paid in WAL but priced at a fixed rate of **$0.023/GB/month**. The amount of WAL required adjusts automatically as the WAL token price changes.
 
-Use the [Walrus Cost Calculator](https://costcalculator.wal.app/) to estimate total storage costs interactively.
+For Testnet, you can exchange Testnet SUI for Testnet WAL from [Exchange Testnet SUI for WAL](/docs/system-overview/available-networks#testnet-wal-faucet). Use the official exchange flow so the WAL package matches what the Walrus client expects.
 
-Walrus storage costs are a combination of WAL and SUI fees incurred from storage resources, upload costs, Sui transaction fees, and Sui object storage resources.
+Behind the scenes, Walrus storage nodes track WAL prices from multiple sources and periodically update their onchain price vote to keep costs aligned with USD.
+
+You also pay **SUI** for executing transactions on Sui Mainnet. Each operation that interacts with the Sui blockchain (registering a blob, posting a certificate, extending storage) incurs a gas fee in SUI. See [SUI tokenomics](https://docs.sui.io/concepts/tokenomics) and [SUI gas fee calculation](https://docs.sui.io/concepts/tokenomics/gas-in-sui) for more details.
+
+> **Tip**
+>
+> Walrus uses erasure coding with approximately 5x expansion. The cost calculator and `walrus info` account for this. You do not need to calculate the expansion yourself.
+## What you get for $0.023/GB/month
+
+At $0.023 per GB per month, Walrus is in line with centralized storage providers but includes additional capabilities and lower configuration requirements.
+
+#### Built-in redundancy
+
+Data is encoded using erasure coding with approximately 4.5x redundancy across independent storage nodes. Achieving similar redundancy in a centralized provider typically requires storing additional copies in multiple regions.
+
+#### Portability
+
+Data is not tied to a single provider and can be accessed across environments efficiently without migration overhead. Moving data across centralized cloud storage can be costly (egress fees) and operationally complex.
+
+#### Verifiability
+
+Data is content-addressed and cryptographically verifiable, so you can prove it has not been altered. Cloud storage providers rely on internal checksums to maintain integrity but do not provide independent verification.
+
+#### Programmable access control
+
+Access is enforced through onchain policies, enabling fine-grained, dynamic permissioning reusable across systems. Cloud storage providers manage access through centralized policies outside application logic, often requiring additional infrastructure for dynamic behavior.
 
 #### Storage resources
 
@@ -24,6 +49,9 @@ You need a storage resource with adequate capacity and epoch duration to store a
 
 The cost of a storage resource is based on the blob's **encoded size**: the erasure-coded size of the blob (roughly 5x the original) plus fixed per-blob metadata of up to ~64 MB. For blobs smaller than 10 MB, this fixed metadata cost dominates. See [Reducing costs for small blobs](#reducing-costs-for-small-blobs-with-quilt) for optimization strategies.
 
+> **Tip**
+>
+> Small blobs still pay fixed metadata overhead. If you store many small files, use [Walrus Quilt](/docs/system-overview/quilt) to batch them and amortize the overhead.
 #### Storage fund
 
 The storage fund holds WAL for storing blobs across 1 or more epochs. When you purchase storage space from the system object, payments are allocated across the relevant epochs. At the end of each epoch, funds are distributed to storage nodes based on performance, which is determined through light audits that nodes conduct on each other.
@@ -68,11 +96,11 @@ Burning a blob's corresponding object on Sui does not delete the blob data on Wa
 
 #### Estimating costs without submitting transactions
 
-These commands help estimate costs without submitting transactions:
+Use the [Walrus Cost Calculator](https://costcalculator.wal.app/) for interactive planning. These commands help estimate costs locally without submitting transactions:
 
-- `walrus info` — displays current costs for buying storage resources and uploads.
+- `walrus info` displays current costs for buying storage resources and uploads.
 
-- `walrus store --dry-run ...` — outputs the encoded size used in WAL cost calculations without submitting any transactions.
+- `walrus store --dry-run ...` outputs the encoded size used in WAL cost calculations without submitting any transactions.
 
 ## Storage resource lifecycle
 
@@ -119,6 +147,14 @@ You can acquire storage resources through 3 methods:
 #### Reducing costs for small blobs with Quilt
 
 [Walrus Quilt](/docs/system-overview/quilt) is a batch storage tool that amortizes metadata costs across multiple blobs stored together. It can also significantly reduce Sui computation and storage costs.
+
+Use Quilt when you are storing many small files such as JSON metadata, thumbnails, or configuration files. The savings come from amortizing a single transaction fee and storage reservation across all items in the batch.
+
+Trade-offs to consider:
+
+- Quilt adds complexity to your application's storage and retrieval logic.
+
+For details, see [Batch Storage with Quilt](/docs/system-overview/quilt).
 
 #### Buy storage resources in bulk
 

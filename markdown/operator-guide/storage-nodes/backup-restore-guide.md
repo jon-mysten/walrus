@@ -1,18 +1,15 @@
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
 Walrus storage nodes provide backup and restore functionality for the primary database containing blob data. This guide covers configuration requirements, operational procedures, and best practices for automated and manual backup processes and restore operations.
 
-:::info
-
-The current backup implementation creates full copies of the database files. Backups require substantial disk space, approximately the same size as your active database. A checkpoint-based solution is planned for a future release.
-
-:::
-
-<Tabs>
-<TabItem value="prereq" label="Prerequisites">
+> **Info**
+>
+> The current backup implementation creates full copies of the database files. Backups require substantial disk space, approximately the same size as your active database. A checkpoint-based solution is planned for a future release.
 
 - [x] Storage node running with appropriate permissions to create backups
 - [x] Sufficient disk space for backup storage (a separate physical volume is recommended)
 - [x] Unix or Linux operating system with support for Unix domain sockets
-- [x] `walrus` [user account](/docs/operator-guide/storage-node-setup) with appropriate permissions
+- [x] `walrus` [user account](/docs/operator-guide/storage-nodes/storage-node-setup) with appropriate permissions
 - [x] Configure the local administration socket
 
     The backup system communicates with running storage nodes through a Unix domain socket. To enable this functionality:
@@ -44,9 +41,6 @@ The current backup implementation creates full copies of the database files. Bac
     - **local-admin log-level**
 
     :::
-
-</TabItem>
-</Tabs>
 
 ## Set up automated periodic backups
 
@@ -104,18 +98,15 @@ Sample output:
 
 ```sh
 Backups:
-Backup ID: 1, Size: 85.9 GB, Files: 1055, Created: 2025-07-02T00:25:48Z
-Backup ID: 2, Size: 86.2 GB, Files: 1058, Created: 2025-07-02T04:25:52Z
+Backup ID: 1, Size: 85.9 GiB, Files: 1055, Created: 2025-07-02T00:25:48Z
+Backup ID: 2, Size: 86.2 GiB, Files: 1058, Created: 2025-07-02T04:25:52Z
 ```
 
 ## Restore from a backup
 
-:::danger
-
-Do not copy backup directories directly to the storage node data path. You must use the restore tool to properly reconstruct the database from checkpoint files. The storage engine cannot recognize directly copied content.
-
-:::
-
+> **Danger**
+>
+> Do not copy backup directories directly to the storage node data path. You must use the restore tool to properly reconstruct the database from checkpoint files. The storage engine cannot recognize directly copied content.
 To restore from a backup:
 
 ##### Step 1: Stop the storage node service.

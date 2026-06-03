@@ -1,3 +1,5 @@
+> For the complete documentation index, see [llms.txt](https://docs.wal.app/llms.txt)
+
 Walrus is a verifiable data platform for high-stakes systems like AI and onchain finance, where data is stored as blobs.
 
 Walrus uses an object storage architecture, where blobs are stored in a flat namespace rather than a hierarchy. There are no folders or directories. Each piece of data in an object storage model contains the data itself, metadata describing the data, and a unique identifier.
@@ -19,13 +21,24 @@ Sui and Walrus each have the following available [networks](/docs/system-overvie
 
 When you are getting started, you should use Testnet.
 
+## Choose your upload path
+
+Walrus supports several upload paths. Choose the best path for your use case based on where the upload runs, who manages signing, and who operates the payment and authentication boundary.
+
+| **Upload path** | **Use case** | **Start here** |
+| --- | --- | --- |
+| Walrus CLI | Local development, scripts, and operator workflows | Continue with this guide, then see [Store blobs with the Walrus client](/docs/walrus-client/storing-blobs) |
+| HTTP API publisher | Quick Testnet uploads or services that already use HTTP | [Storing Blobs with the HTTP API](/docs/http-api/storing-blobs) |
+| TypeScript SDK | Applications that integrate Walrus directly in code | [Software Development Kits (SDKs) and Other Tools](/docs/typescript-sdk/sdks) |
+| Upload Relay | Browser or mobile clients that need a relay-managed upload path | [Operate an Upload Relay](/docs/operator-guide/upload-relay) |
+| Private authenticated publisher | Controlled Mainnet clients that need an HTTP upload interface | [Mainnet Publisher Production Guide](/docs/operator-guide/publishers/mainnet-production-guide) |
+
+> **Mainnet publisher availability**
+>
+> Walrus does not provide a public unauthenticated publisher on Mainnet. For production Mainnet uploads, run a private authenticated publisher, use an upload relay, or integrate directly with the TypeScript SDK.
+The rest of this guide uses the Walrus CLI on Testnet because it shows the full setup flow: installing tools, configuring a wallet, getting Testnet tokens, storing a blob, and reading it back.
+
 ##step Install tooling
-
-:::info
-
-You can use the Walrus HTTP API with a Testnet publisher endpoint to upload and retrieve blobs with no downloads, installation, wallet, or tokens required. [Learn more](/docs/http-api/storing-blobs).
-
-:::
 
 To install Walrus and Sui, use the Mysten Labs `suiup` tool.
 
@@ -77,7 +90,7 @@ To confirm the Walrus configuration also uses Testnet, run the following command
 $ walrus info
 ```
 
-Make sure that the output of this command includes `Epoch duration: 1day` to indicate connection to Testnet.
+Make sure that the output of this command includes `Epoch duration: 1day` to indicate connection to Testnet. The same output also includes current storage pricing information. For interactive cost estimates, use the [Walrus Cost Calculator](https://costcalculator.wal.app/).
 
 For detailed information about the `walrus` CLI, use `walrus --help`. Append `--help` to any `walrus` subcommand to get details about that specific command.
 
@@ -103,14 +116,11 @@ To see all your addresses and their key schemes, run the following command:
 $ sui client addresses
 ```
 
-:::caution Store your keys securely
-
-You must store your private key and recovery passphrase securely, otherwise you might lose access to your address.
-
-[Learn more about addresses, available key pair options, and key storage.](https://docs.sui.io/guides/developer/getting-started/get-address)
-
-:::
-
+> **Store your keys securely**
+>
+> You must store your private key and recovery passphrase securely, otherwise you might lose access to your address.
+> 
+> [Learn more about addresses, available key pair options, and key storage.](https://docs.sui.io/guides/developer/getting-started/get-address)
 #### Creating additional addresses
 
 You can create additional addresses if needed:
@@ -123,7 +133,7 @@ The argument `ed25519` specifies the key pair scheme to be of type ed25519.
 
 ##step Fund Sui account with tokens
 
-Before you can upload a file to Walrus and store it as a blob, you need SUI tokens to pay transaction fees and WAL tokens to pay for storage on the network. Walrus Testnet uses Testnet WAL tokens that have no value. You can exchange them at a 1:1 rate for Testnet SUI tokens.
+Before you can upload a file to Walrus and store it as a blob, you need SUI tokens to pay transaction fees and WAL tokens to pay for storage on the network. Walrus Testnet uses Testnet WAL tokens that have no value. You can exchange them at a 1:1 rate for Testnet SUI tokens. For more information about storage costs, see [Storage Costs](/docs/system-overview/storage-costs).
 
 Navigate to the SUI Testnet faucet: https://faucet.sui.io/
 
@@ -141,12 +151,9 @@ After you insert your address on the faucet and receive a message confirming you
 $ sui client balance
 ```
 
-:::tip Faucet alternatives
-
-The Sui faucet is rate limited. If you encounter errors or have questions, you can request tokens from the Discord faucet or a third-party faucet. [Learn more about the Sui faucet.](https://docs.sui.io/guides/developer/getting-started/get-coins)
-
-:::
-
+> **Faucet alternatives**
+>
+> The Sui faucet is rate limited. If you encounter errors or have questions, you can request tokens from the Discord faucet or a third-party faucet. [Learn more about the Sui faucet.](https://docs.sui.io/guides/developer/getting-started/get-coins)
 Convert some of those SUI tokens into WAL with the following command:
 
 ```sh
@@ -184,7 +191,6 @@ You must specify the `--epochs` flag, because the system stores blobs for a cert
 
 The system uploads a blob in slivers, which are small pieces of the file the system stores on different servers through erasure coding. [Learn more](/docs/system-overview/red-stuff) about the Walrus architecture and how the system implements erasure coding.
 
-<!-- IMPORT_CONTENT_RESOLVED source="blob-object-id" mode="snippet" -->
 After you upload a blob to Walrus, it has 2 identifiers:
 
 ```sh
@@ -197,7 +203,6 @@ Sui object ID: 0x1c086e216c4d35bf4c1ea493aea701260ffa5b0070622b17271e4495a030fe8
 - Sui Object ID: The blob's corresponding newly created Sui object identifier, as the system binds all blobs to one or more Sui objects.
 
 You use blob IDs to read blob data, while you use Sui object IDs to make modifications to the blob's metadata, such as its storage duration. You might also use them to read blob data.
-<!-- /IMPORT_CONTENT_RESOLVED -->
 
 You can use [Walrus Explorer](https://walruscan.com/) to view more information about a blob ID.
 
